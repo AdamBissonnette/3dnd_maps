@@ -38,6 +38,10 @@ export const MAPS = {
       metalness: 0,
       roughness: 0.92,
     },
+    lighting: {
+      position: [1, 2, 1],
+      intensity: 3,
+    },
     scene: {
       background: 0xb7b7b7,
       fog: false,
@@ -71,6 +75,10 @@ export const MAPS = {
       color: 0xffffff,
       metalness: 0,
       roughness: 0.92,
+    },
+    lighting: {
+      position: [1, 2, 1],
+      intensity: 3,
     },
     scene: {
       background: 0xb7b7b7,

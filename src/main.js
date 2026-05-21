@@ -18,6 +18,7 @@ const mapNav = document.getElementById('map-nav');
 const statusEl = document.getElementById('status');
 const copyBtn = document.getElementById('copy-config');
 const hudIcon = document.getElementById('hud-icon');
+const loadingOverlay = document.getElementById('loading-overlay');
 
 if (!showConfig) {
   document.body.classList.add('public-build');
@@ -113,6 +114,12 @@ function setStatus(text) {
   statusEl.textContent = text;
 }
 
+function setLoading(active) {
+  if (!loadingOverlay) return;
+  loadingOverlay.hidden = !active;
+  loadingOverlay.setAttribute('aria-busy', active ? 'true' : 'false');
+}
+
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
@@ -125,7 +132,8 @@ async function loadMap(mapId) {
   const config = MAPS[mapId];
   if (!config) return;
 
-  setStatus('Loading…');
+  setLoading(true);
+  setStatus('');
   disposeTerrain();
   if (gui) {
     gui.destroy();
@@ -168,9 +176,11 @@ async function loadMap(mapId) {
 
     frameCamera(terrainMesh, config);
     if (showConfig) setupGui(config);
+    setLoading(false);
     setStatus('');
   } catch (err) {
     console.error(err);
+    setLoading(false);
     setStatus(`Failed: ${err.message}`);
   }
 }
@@ -335,7 +345,7 @@ function normalizeLightingParams(raw = {}) {
       position[1] ?? 2,
       position[2] ?? 1,
     ],
-    intensity: raw.intensity ?? 1.1,
+    intensity: raw.intensity ?? 3,
   };
 }
 
@@ -552,7 +562,7 @@ function setupGui(config) {
     .name('Position Z')
     .onChange(updateLighting);
   lightingFolder
-    .add(lightingParams, 'intensity', 0, 3, 0.05)
+    .add(lightingParams, 'intensity', 0, 5, 0.05)
     .name('Intensity')
     .onChange(updateLighting);
   lightingFolder.open();
