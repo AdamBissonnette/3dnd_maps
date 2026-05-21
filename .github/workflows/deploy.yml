@@ -3,9 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -27,11 +29,19 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          # Set repository variable or edit to match repo name, e.g. /stl-map-viewer/
           BASE_PATH: ${{ vars.BASE_PATH || '/3dnd_maps/' }}
+      - name: Update docs/ for branch deploy
+        run: |
+          rm -rf docs
+          cp -r dist docs
+          touch docs/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: update GitHub Pages build in docs/ [skip ci]'
+          file_pattern: docs/**
 
   deploy:
     needs: build
