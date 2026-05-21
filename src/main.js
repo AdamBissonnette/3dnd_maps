@@ -4,10 +4,20 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import GUI from 'lil-gui';
 import { DEFAULT_MAP_ID, getMapIdFromUrl, MAPS } from './maps.config.js';
 
+const isPublicBuild = import.meta.env.PROD;
 const container = document.getElementById('app');
-const mapSelect = document.getElementById('map-select');
+const mapNav = document.getElementById('map-nav');
 const statusEl = document.getElementById('status');
 const copyBtn = document.getElementById('copy-config');
+const hudIcon = document.getElementById('hud-icon');
+
+if (isPublicBuild) {
+  document.body.classList.add('public-build');
+}
+
+if (hudIcon) {
+  hudIcon.src = `${import.meta.env.BASE_URL}favicon.ico`;
+}
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -38,29 +48,47 @@ let gui = null;
 let textureParams = null;
 let currentTexture = null;
 
+const mapLinks = new Map();
+
 for (const map of Object.values(MAPS)) {
-  const option = document.createElement('option');
-  option.value = map.id;
-  option.textContent = map.name;
-  mapSelect.appendChild(option);
+  const link = document.createElement('a');
+  link.href = `?map=${map.id}`;
+  link.textContent = map.name;
+  link.dataset.mapId = map.id;
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    navigateToMap(map.id);
+  });
+  mapNav.appendChild(link);
+  mapLinks.set(map.id, link);
 }
-mapSelect.value = activeMapId;
 
-mapSelect.addEventListener('change', () => {
-  const next = mapSelect.value;
+updateMapNav(activeMapId);
+
+function navigateToMap(mapId) {
+  if (!MAPS[mapId] || mapId === activeMapId) return;
   const url = new URL(window.location.href);
-  url.searchParams.set('map', next);
+  url.searchParams.set('map', mapId);
   window.history.replaceState({}, '', url);
-  loadMap(next);
-});
+  updateMapNav(mapId);
+  loadMap(mapId);
+}
 
-copyBtn.addEventListener('click', async () => {
+function updateMapNav(mapId) {
+  for (const [id, link] of mapLinks) {
+    link.classList.toggle('active', id === mapId);
+  }
+}
+
+if (!isPublicBuild) {
+  copyBtn.addEventListener('click', async () => {
   if (!textureParams) return;
   const { offsetStep, ...texture } = textureParams;
   const snippet = JSON.stringify({ offsetStep, ...texture }, null, 2);
   await navigator.clipboard.writeText(snippet);
-  setStatus('Texture config copied to clipboard');
-});
+    setStatus('Texture config copied to clipboard');
+  });
+}
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -80,6 +108,7 @@ function animate() {
 
 async function loadMap(mapId) {
   activeMapId = mapId;
+  updateMapNav(mapId);
   const config = MAPS[mapId];
   if (!config) return;
 
@@ -122,7 +151,7 @@ async function loadMap(mapId) {
     scene.add(terrainMesh);
 
     frameCamera(terrainMesh, config);
-    setupGui(config);
+    if (!isPublicBuild) setupGui(config);
     setStatus(config.name);
   } catch (err) {
     console.error(err);

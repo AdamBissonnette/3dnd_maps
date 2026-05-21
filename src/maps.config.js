@@ -12,7 +12,7 @@ function asset(path) {
 export const MAPS = {
   barovia1: {
     id: 'barovia1',
-    name: 'Barovia Map 1',
+    name: 'Barovia - Standard',
     stl: asset('assets/barovia1/barovia_map_v1.stl'),
     image: asset('assets/barovia1/Barovia-5e_trim.png'),
     orientation: { x: -Math.PI / 2, y: 0, z: 0 },
@@ -46,7 +46,7 @@ export const MAPS = {
 
   barovia2: {
     id: 'barovia2',
-    name: 'Barovia Map 2',
+    name: 'Barovia - Berkel',
     stl: asset('assets/barovia2/barovia_map_v2-map.stl'),
     image: asset('assets/barovia2/map_og.png'),
     orientation: { x: -Math.PI / 2, y: 0, z: 0 },
