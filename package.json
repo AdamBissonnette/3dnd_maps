@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite index.dev.html",
+    "dev": "vite",
     "build": "vite build && mv dist/index.dev.html dist/index.html",
     "preview": "vite preview"
   },
