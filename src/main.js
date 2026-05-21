@@ -34,12 +34,13 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-const keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
-keyLight.position.set(1, 2, 1);
-scene.add(keyLight);
+const mapLight = new THREE.DirectionalLight(0xffffff, 0.85);
+scene.add(mapLight);
 const fillLight = new THREE.DirectionalLight(0xffffff, 0.35);
 fillLight.position.set(-1, 0.5, -1);
 scene.add(fillLight);
+
+let lightingParams = null;
 
 const loader = new STLLoader();
 let activeMapId = getMapIdFromUrl();
@@ -112,7 +113,7 @@ async function loadMap(mapId) {
   const config = MAPS[mapId];
   if (!config) return;
 
-  setStatus(`Loading ${config.name}…`);
+  setStatus('Loading…');
   disposeTerrain();
   if (gui) {
     gui.destroy();
@@ -150,9 +151,12 @@ async function loadMap(mapId) {
     terrainMesh.receiveShadow = false;
     scene.add(terrainMesh);
 
+    lightingParams = normalizeLightingParams(config.lighting);
+    applyLighting(lightingParams);
+
     frameCamera(terrainMesh, config);
     if (!isPublicBuild) setupGui(config);
-    setStatus(config.name);
+    setStatus('');
   } catch (err) {
     console.error(err);
     setStatus(`Failed: ${err.message}`);
@@ -289,6 +293,7 @@ function snapshotMapSettings(map) {
     upAxis: map.upAxis,
     uvAxes: { ...map.uvAxes },
     texture: normalizeTextureParams(map.texture),
+    lighting: normalizeLightingParams(map.lighting),
   };
 }
 
@@ -307,6 +312,29 @@ function resetMapSettings(mapId) {
   config.upAxis = defaults.upAxis;
   config.uvAxes = { ...defaults.uvAxes };
   config.texture = { ...defaults.texture };
+  config.lighting = { ...defaults.lighting };
+}
+
+function normalizeLightingParams(raw = {}) {
+  const position = raw.position ?? [1, 2, 1];
+  return {
+    position: [
+      position[0] ?? 1,
+      position[1] ?? 2,
+      position[2] ?? 1,
+    ],
+    intensity: raw.intensity ?? 1.1,
+  };
+}
+
+function applyLighting(params) {
+  mapLight.intensity = params.intensity;
+  mapLight.position.set(params.position[0], params.position[1], params.position[2]);
+}
+
+function syncLightingConfig(config) {
+  if (!lightingParams) return;
+  config.lighting = { ...config.lighting, ...lightingParams };
 }
 
 function normalizeTextureParams(raw = {}) {
@@ -487,6 +515,36 @@ function setupGui(config) {
     .onChange(updateTexture);
   folder.open();
 
+  const lightingFolder = gui.addFolder('Lighting');
+  lightingParams = normalizeLightingParams(config.lighting);
+  const lightPos = {
+    x: lightingParams.position[0],
+    y: lightingParams.position[1],
+    z: lightingParams.position[2],
+  };
+  const updateLighting = () => {
+    lightingParams.position = [lightPos.x, lightPos.y, lightPos.z];
+    applyLighting(lightingParams);
+    syncLightingConfig(config);
+  };
+  lightingFolder
+    .add(lightPos, 'x', -5, 5, 0.05)
+    .name('Position X')
+    .onChange(updateLighting);
+  lightingFolder
+    .add(lightPos, 'y', -5, 5, 0.05)
+    .name('Position Y')
+    .onChange(updateLighting);
+  lightingFolder
+    .add(lightPos, 'z', -5, 5, 0.05)
+    .name('Position Z')
+    .onChange(updateLighting);
+  lightingFolder
+    .add(lightingParams, 'intensity', 0, 3, 0.05)
+    .name('Intensity')
+    .onChange(updateLighting);
+  lightingFolder.open();
+
   const orientFolder = gui.addFolder('Orientation');
   const orient = {
     x: config.orientation?.x ?? -Math.PI / 2,
@@ -545,12 +603,12 @@ function setupGui(config) {
         resetSettings() {
           resetMapSettings(activeMapId);
           loadMap(activeMapId);
-          setStatus('Texture & orientation reset to defaults');
+          setStatus('Texture, orientation & lighting reset to defaults');
         },
       },
       'resetSettings',
     )
-    .name('Reset texture & orientation');
+    .name('Reset texture, orientation & lighting');
 
   const cameraFolder = gui.addFolder('Camera (paste into maps.config.js)');
   cameraFolder
