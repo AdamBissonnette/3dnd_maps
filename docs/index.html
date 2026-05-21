@@ -70,6 +70,30 @@
       body.public-build #copy-config {
         display: none;
       }
+      #hud-social {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding-left: 8px;
+        border-left: 1px solid rgba(0, 0, 0, 0.12);
+      }
+      #hud-social a {
+        display: flex;
+        padding: 4px;
+        border-radius: 6px;
+        color: #555;
+        line-height: 0;
+        transition: color 0.15s, background 0.15s;
+      }
+      #hud-social a:hover {
+        color: #222;
+        background: rgba(0, 0, 0, 0.06);
+      }
+      #hud-social svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
       #loading-overlay {
         position: fixed;
         inset: 0;
@@ -123,6 +147,47 @@
       <label class="visually-hidden" for="map-select">Map</label>
       <select id="map-select" aria-label="Map"></select>
       <span id="status"></span>
+      <nav id="hud-social" aria-label="Social links">
+        <a
+          href="https://www.patreon.com/cw/Adamnant"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Patreon"
+          title="Patreon"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M22.957 7.21c-.004-3.064-2.502-5.538-5.566-5.538H5.566C2.502 1.672 0 4.146 0 7.21v9.58c0 3.064 2.502 5.538 5.566 5.538h11.825c3.064 0 5.566-2.474 5.566-5.538V7.21zM15.36 17.21H8.64V6.79h6.72v10.42z"
+            />
+          </svg>
+        </a>
+        <a
+          href="https://www.thingiverse.com/thing:7354484"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Thingiverse"
+          title="Thingiverse"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M11.955.005C5.425-.152-.091 5.485.007 11.805c-.235 6.756 5.537 12.25 12.052 12.196C18.621 23.9 23.912 18.595 24 12.03 24.031 5.483 18.505-.18 11.955.005zm-.047 1.701a10.276 10.276 0 0 1 7.36 17.529 10.275 10.275 0 0 1-17.556-7.287C1.71 6.308 6.268 1.728 11.907 1.706zm-5.55 4.781c-.322 0-.358.033-.358.361v2.248c0 .351.04.391.398.391h3.823c.274 0 .274.004.274.265v9.736a.176.176 0 0 0 .051.146c.04.038.093.059.148.053h2.555c.247-.003.283-.035.283-.28v-9.32c0-.124.004-.239 0-.39s.055-.21.218-.21h3.9c.319.004.35-.032.35-.344V6.855c0-.34-.024-.363-.37-.363h-5.626z"
+            />
+          </svg>
+        </a>
+        <a
+          href="https://github.com/AdamBissonnette?tab=repositories"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          title="GitHub"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+            />
+          </svg>
+        </a>
+      </nav>
       <button id="copy-config" type="button" title="Copy texture settings for maps.config.js">
         Copy texture config
       </button>
