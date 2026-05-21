@@ -1,8 +1,10 @@
 # STL Map Viewer
 
+**Live viewer:** [https://adambissonnette.github.io/3dnd_maps/](https://adambissonnette.github.io/3dnd_maps/)
+
 Interactive 3D terrain viewer: load an STL height map, drape a PNG texture, align it in the browser, and bake settings into config. Inspired by [Zootlocker’s Barovia viewer](https://github.com/Zootlocker/Zootlocker.github.io/tree/main/barovia) (Qgis2threejs), but built for your own Blender exports.
 
-Includes two preconfigured **Barovia** maps with tuned texture alignment.
+Includes preconfigured **Barovia** map variants with tuned texture alignment.
 
 ## Quick start (local)
 
