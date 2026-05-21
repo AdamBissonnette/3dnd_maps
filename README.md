@@ -18,7 +18,7 @@ chmod +x scripts/*.sh
 npm run dev
 ```
 
-Open http://localhost:5173 — use `?map=barovia2` for the second map.
+Open http://localhost:5173 — use `?map=barovia1v2` or `?map=barovia2` for other variants.
 
 ## Maps
 
@@ -26,8 +26,9 @@ Configured in [`src/maps.config.js`](src/maps.config.js). Assets are served from
 
 | Map | STL | Image |
 |-----|-----|-------|
-| Barovia Map 1 | `barovia1/barovia_map_v1.stl` | `Barovia-5e_trim.png` |
-| Barovia Map 2 | `barovia2/barovia_map_v2-map.stl` | `map_og.png` |
+| Standard V1 | `barovia1/barovia_map_v1.stl` | `Barovia-5e_trim.png` |
+| Standard V2 | `barovia1/barovia_map_v2.stl` | `Barovia-5e_trim.png` |
+| Berkle V1 | `barovia2/barovia_map_v2-map.stl` | `map_og.png` |
 
 ## UI
 

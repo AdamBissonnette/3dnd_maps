@@ -21,6 +21,9 @@ copy() {
 
 mkdir -p "$ROOT/public/assets/barovia1" "$ROOT/public/assets/barovia2"
 copy "$MAP1_SRC/barovia_map_v1.stl" "$ROOT/public/assets/barovia1/barovia_map_v1.stl"
+if [[ -f "$MAP1_SRC/barovia_map_v2.stl" ]]; then
+  copy "$MAP1_SRC/barovia_map_v2.stl" "$ROOT/public/assets/barovia1/barovia_map_v2.stl"
+fi
 copy "$MAP1_SRC/Barovia-5e_trim.png" "$ROOT/public/assets/barovia1/Barovia-5e_trim.png"
 copy "$MAP2_SRC/barovia_map_v2-map.stl" "$ROOT/public/assets/barovia2/barovia_map_v2-map.stl"
 copy "$MAP2_SRC/map_og.png" "$ROOT/public/assets/barovia2/map_og.png"

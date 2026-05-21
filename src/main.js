@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import GUI from 'lil-gui';
-import { DEFAULT_MAP_ID, getMapIdFromUrl, MAPS } from './maps.config.js';
+import { DEFAULT_MAP_ID, getMapIdFromUrl, MAP_MENU, MAPS } from './maps.config.js';
 
 function isConfigMode() {
   return new URLSearchParams(window.location.search).get('config') === '1';
@@ -14,7 +14,7 @@ const showConfig =
   ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
 const container = document.getElementById('app');
-const mapNav = document.getElementById('map-nav');
+const mapSelect = document.getElementById('map-select');
 const statusEl = document.getElementById('status');
 const copyBtn = document.getElementById('copy-config');
 const hudIcon = document.getElementById('hud-icon');
@@ -64,34 +64,30 @@ let gui = null;
 let textureParams = null;
 let currentTexture = null;
 
-const mapLinks = new Map();
-
-for (const map of Object.values(MAPS)) {
-  const link = document.createElement('a');
-  link.href = mapUrl(map.id);
-  link.textContent = map.name;
-  link.dataset.mapId = map.id;
-  link.addEventListener('click', (event) => {
-    event.preventDefault();
-    navigateToMap(map.id);
-  });
-  mapNav.appendChild(link);
-  mapLinks.set(map.id, link);
+for (const group of MAP_MENU) {
+  const optgroup = document.createElement('optgroup');
+  optgroup.label = group.label;
+  for (const option of group.options) {
+    const el = document.createElement('option');
+    el.value = option.id;
+    el.textContent = option.label;
+    optgroup.appendChild(el);
+  }
+  mapSelect.appendChild(optgroup);
 }
 
-updateMapNav(activeMapId);
+mapSelect.value = activeMapId;
+mapSelect.addEventListener('change', () => navigateToMap(mapSelect.value));
 
 function navigateToMap(mapId) {
   if (!MAPS[mapId] || mapId === activeMapId) return;
   window.history.replaceState({}, '', mapUrl(mapId));
-  updateMapNav(mapId);
+  updateMapSelect(mapId);
   loadMap(mapId);
 }
 
-function updateMapNav(mapId) {
-  for (const [id, link] of mapLinks) {
-    link.classList.toggle('active', id === mapId);
-  }
+function updateMapSelect(mapId) {
+  if (mapSelect && MAPS[mapId]) mapSelect.value = mapId;
 }
 
 if (showConfig && copyBtn) {
@@ -128,7 +124,7 @@ function animate() {
 
 async function loadMap(mapId) {
   activeMapId = mapId;
-  updateMapNav(mapId);
+  updateMapSelect(mapId);
   const config = MAPS[mapId];
   if (!config) return;
 
