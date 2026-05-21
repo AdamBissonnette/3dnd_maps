@@ -55,7 +55,25 @@ function baroviaStandardMap(id, name, stlPath) {
 
 export const MAPS = {
   barovia1: baroviaStandardMap('barovia1', 'Standard V1', 'assets/barovia1/barovia_map_v1.stl'),
-  barovia1v2: baroviaStandardMap('barovia1v2', 'Standard V2', 'assets/barovia1/barovia_map_v2.stl'),
+  barovia1v2: {
+    ...baroviaStandardMap('barovia1v2', 'Standard V2', 'assets/barovia1/barovia_map_v2.stl'),
+    texture: {
+      offsetStep: 0.001,
+      mirrorX: false,
+      mirrorY: false,
+      offsetX: -0.014,
+      offsetY: 0.021,
+      scaleX: 0.99,
+      scaleY: 0.96,
+      rotation: -Math.PI,
+      centerX: 0.5,
+      centerY: 0.5,
+    },
+    camera: {
+      position: [-5.0142, 137.8043, -24.915],
+      target: [-5.8252, -1.119, -2.9363],
+    },
+  },
   barovia2: {
     id: 'barovia2',
     name: 'Berkle V1',
