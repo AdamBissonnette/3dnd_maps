@@ -145,9 +145,11 @@ export default defineConfig({
 });
 ```
 
-In the repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+In the repo: **Settings → Pages → Build and deployment → Source: GitHub Actions** (not “Deploy from a branch”). Branch deploy serves raw `index.html` and breaks with a `/src/main.js` MIME type error.
 
 Site URL: `https://adambissonnette.github.io/3dnd_maps/`
+
+**Troubleshooting:** If the console shows `Loading module from …/src/main.js` was blocked (disallowed MIME type `text/html`), Pages is serving the repo root instead of the Vite `dist` build. Switch the Pages source to **GitHub Actions** and re-run the “Deploy to GitHub Pages” workflow.
 
 **Option B — Manual deploy from `dist/`**
 
