@@ -156,6 +156,8 @@ Site URL: `https://adambissonnette.github.io/3dnd_maps/` (or `…/3dnd_maps/docs
 
 **Troubleshooting:** If the console requests `…/src/main.js`, Pages is serving unbuilt sources. Use **GitHub Actions** or branch folder **`/docs`**, then hard-refresh.
 
+**Texture tuning on the live site:** add `?config=1` (e.g. `https://adambissonnette.github.io/3dnd_maps/?config=1`). `npm run dev` on localhost always shows the tuning panel.
+
 **Option B — Manual deploy from `dist/`**
 
 ```bash

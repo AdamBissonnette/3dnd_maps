@@ -4,15 +4,29 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import GUI from 'lil-gui';
 import { DEFAULT_MAP_ID, getMapIdFromUrl, MAPS } from './maps.config.js';
 
-const isPublicBuild = import.meta.env.PROD;
+function isConfigMode() {
+  return new URLSearchParams(window.location.search).get('config') === '1';
+}
+
+const showConfig =
+  import.meta.env.DEV ||
+  isConfigMode() ||
+  ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
 const container = document.getElementById('app');
 const mapNav = document.getElementById('map-nav');
 const statusEl = document.getElementById('status');
 const copyBtn = document.getElementById('copy-config');
 const hudIcon = document.getElementById('hud-icon');
 
-if (isPublicBuild) {
+if (!showConfig) {
   document.body.classList.add('public-build');
+}
+
+function mapUrl(mapId) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('map', mapId);
+  return `${url.pathname}${url.search}`;
 }
 
 if (hudIcon) {
@@ -53,7 +67,7 @@ const mapLinks = new Map();
 
 for (const map of Object.values(MAPS)) {
   const link = document.createElement('a');
-  link.href = `?map=${map.id}`;
+  link.href = mapUrl(map.id);
   link.textContent = map.name;
   link.dataset.mapId = map.id;
   link.addEventListener('click', (event) => {
@@ -68,9 +82,7 @@ updateMapNav(activeMapId);
 
 function navigateToMap(mapId) {
   if (!MAPS[mapId] || mapId === activeMapId) return;
-  const url = new URL(window.location.href);
-  url.searchParams.set('map', mapId);
-  window.history.replaceState({}, '', url);
+  window.history.replaceState({}, '', mapUrl(mapId));
   updateMapNav(mapId);
   loadMap(mapId);
 }
@@ -81,12 +93,12 @@ function updateMapNav(mapId) {
   }
 }
 
-if (!isPublicBuild) {
+if (showConfig && copyBtn) {
   copyBtn.addEventListener('click', async () => {
-  if (!textureParams) return;
-  const { offsetStep, ...texture } = textureParams;
-  const snippet = JSON.stringify({ offsetStep, ...texture }, null, 2);
-  await navigator.clipboard.writeText(snippet);
+    if (!textureParams) return;
+    const { offsetStep, ...texture } = textureParams;
+    const snippet = JSON.stringify({ offsetStep, ...texture }, null, 2);
+    await navigator.clipboard.writeText(snippet);
     setStatus('Texture config copied to clipboard');
   });
 }
@@ -155,7 +167,7 @@ async function loadMap(mapId) {
     applyLighting(lightingParams);
 
     frameCamera(terrainMesh, config);
-    if (!isPublicBuild) setupGui(config);
+    if (showConfig) setupGui(config);
     setStatus('');
   } catch (err) {
     console.error(err);
